@@ -1,44 +1,105 @@
-import app  from '../firebase';
+import app from '../firebase';
 import React, { useState } from 'react';
 import '../App.css';
-import DrawingBoard from 'react-drawing-board';
-import { MDBCard, MDBCardImage } from 'mdbreact';
+import { MDBBtn, MDBIcon, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBCard, MDBCardImage,MDBCardBody, MDBCardTitle } from 'mdbreact';
 
-const DashboardRouter = ({user}) => {
+const DashboardRouter = ({setBinder}) => {
 
-    const handleLogout = () => {
-        app.auth().signOut()
-        window.localStorage.removeItem('user')
-        window.location.replace("/")
-    }
+  const [modal, setModal] = useState(false)
 
-    const Demo = () => {
-        const [operations, setOperations] = useState();
-       
-        return (
-          <DrawingBoard
-            userId="user1" // identify for different players.
-            operations={operations}
-            onChange={(newOperation, afterOperation) => {
-              console.log(`TODO: send ${newOperation}`);
-              setOperations(afterOperation);
-            }}
-            onSave={()=>{console.log('Save');}}
-            style={{width: "100%",height: "100%"}}
-            toolbarPlacement="top"
-          />
-        )
-      }
+  const toggle = () => {
+    setModal(!modal)
+  }
 
+  const Modal = () => {
     return (
-      <div className="background">
-      <div className="auth-container">
-          <MDBCard style={{ width: "85vw", height: "83vh", padding: "18px" }}>
-            <Demo />
-          </MDBCard>
-      </div>
-  </div>
+      <MDBModal isOpen={modal} toggle={toggle}>
+        <MDBModalHeader toggle={toggle}>Create a new Binder</MDBModalHeader>
+        <MDBModalBody>
+          <label
+            htmlFor="defaultFormCardNameEx"
+            className="grey-text font-weight-light"
+          >
+            Binder name
+          </label>
+          <input
+            type="text"
+            id="defaultFormCardNameEx"
+            className="form-control" />
+        </MDBModalBody>
+        <MDBModalFooter>
+          <MDBBtn color="success">Create</MDBBtn>
+        </MDBModalFooter>
+      </MDBModal>
     )
+  }
+
+  const goToBinder= (id) =>{
+    console.log(id);
+  }
+
+  const handleLogout = () => {
+    app.auth().signOut()
+    window.localStorage.removeItem('user')
+    window.location.replace("/")
+  }
+
+  return (
+      <div className="dashboard-container">
+        <div style={{ width: "100vw", height: "90vh", padding: "18px", background: "none" }}>
+          <div className="row">
+            <div className="col-md-10">
+              <h3><b>Dashboard</b></h3>
+            </div>
+            <div className="col-md-2">
+              <MDBBtn onClick={toggle} color="success">
+                <MDBIcon icon="magic" className="mr-1" /> New
+              </MDBBtn>
+            </div>
+          </div>
+          <div className="row p-4">
+            <MDBCard onClick={()=>goToBinder(123)} style={{ width: "15rem", height: "15rem", margin: "15px" }}>
+              <MDBCardImage className="img-fluid" src="https://picsum.photos/640/360" waves />
+              <MDBCardBody>
+                <MDBCardTitle>Card title</MDBCardTitle>
+              </MDBCardBody>
+            </MDBCard>
+            <MDBCard style={{ width: "15rem", height: "15rem", margin: "15px" }}>
+              <MDBCardImage className="img-fluid" src="https://picsum.photos/640/360" waves />
+              <MDBCardBody>
+                <MDBCardTitle>Card title</MDBCardTitle>
+              </MDBCardBody>
+            </MDBCard>
+            <MDBCard style={{ width: "15rem", height: "15rem", margin: "15px" }}>
+              <MDBCardImage className="img-fluid" src="https://picsum.photos/640/360" waves />
+              <MDBCardBody>
+                <MDBCardTitle>Card title</MDBCardTitle>
+              </MDBCardBody>
+            </MDBCard>
+            <MDBCard style={{ width: "15rem", height: "15rem", margin: "15px" }}>
+              <MDBCardImage className="img-fluid" src="https://picsum.photos/640/360" waves />
+              <MDBCardBody>
+                <MDBCardTitle>Card title</MDBCardTitle>
+              </MDBCardBody>
+            </MDBCard>
+            <MDBCard style={{ width: "15rem", height: "15rem", margin: "15px" }}>
+              <MDBCardImage className="img-fluid" src="https://picsum.photos/640/360" waves />
+              <MDBCardBody>
+                <MDBCardTitle>Card title</MDBCardTitle>
+              </MDBCardBody>
+            </MDBCard>
+            <MDBCard style={{ width: "15rem", height: "15rem", margin: "15px" }}>
+              <MDBCardImage className="img-fluid" src="https://picsum.photos/640/360" waves />
+              <MDBCardBody>
+                <MDBCardTitle>Card title</MDBCardTitle>
+              </MDBCardBody>
+            </MDBCard>
+            
+          </div>
+        </div>
+        {Modal()}
+      </div>
+  )
 }
 
 export default DashboardRouter;
