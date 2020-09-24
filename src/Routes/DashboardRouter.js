@@ -1,11 +1,37 @@
 import app from '../firebase';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../App.css';
-import { MDBBtn, MDBIcon, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBCard, MDBCardImage,MDBCardBody, MDBCardTitle } from 'mdbreact';
+import { MDBBtn, MDBCol, MDBIcon, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBCard, MDBCardImage, MDBCardBody, MDBCardTitle, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem, MDBCardText } from 'mdbreact';
+import { createBinder, getAllBinders } from './Helpers/Dashboard'
+import { Redirect } from 'react-router-dom';
 
-const DashboardRouter = ({setBinder}) => {
+const DashboardRouter = () => {
 
+  const [binders, setBinders] = useState([])
   const [modal, setModal] = useState(false)
+  const [name, setName] = useState("")
+
+  useEffect(() => {
+    getAllBinders().then(binders => {
+      setBinders(binders)
+      console.log(binders);
+    }).catch(err => {
+      console.log(err);
+    })
+  }, [])
+
+
+  const handleNameChange = (e) => {
+    setName(e.target.value)
+  }
+
+  const handleCreateBinder = (name) => {
+    createBinder(name).then((binder) => {
+      console.log(binder);
+      setModal(!modal)
+      setBinders([...binders, binder])
+    })
+  }
 
   const toggle = () => {
     setModal(!modal)
@@ -25,16 +51,23 @@ const DashboardRouter = ({setBinder}) => {
           <input
             type="text"
             id="defaultFormCardNameEx"
-            className="form-control" />
+            className="form-control"
+            value={name}
+            onChange={handleNameChange} />
         </MDBModalBody>
         <MDBModalFooter>
-          <MDBBtn color="success">Create</MDBBtn>
+          <MDBBtn color="success" onClick={() => handleCreateBinder(name)}>Create</MDBBtn>
         </MDBModalFooter>
       </MDBModal>
     )
   }
 
-  const goToBinder= (id) =>{
+  const goToBinder = (id) => {
+    window.localStorage.setItem('binder', id)
+    window.location.assign("/binder")
+  }
+
+  const deleteBinder = (id) => {
     console.log(id);
   }
 
@@ -44,61 +77,41 @@ const DashboardRouter = ({setBinder}) => {
     window.location.replace("/")
   }
 
+  const Binders = () => {
+    return binders.map((binder, index) => {
+      return (
+        <div key={index}>
+          <MDBCard style={{ width: "15rem", height: "15rem", margin: "15px" }}  onClick={() => goToBinder(binder._id)}>
+            <MDBCardImage className="img-fluid" src="https://picsum.photos/640/460" waves />
+            <MDBCardBody>
+              <MDBCardTitle>{binder.name}</MDBCardTitle>
+            </MDBCardBody>
+          </MDBCard>
+        </div>
+      )
+    })
+  }
+
+
   return (
-      <div className="dashboard-container">
-        <div style={{ width: "100vw", height: "90vh", padding: "18px", background: "none" }}>
-          <div className="row">
-            <div className="col-md-10">
-              <h3><b>Dashboard</b></h3>
-            </div>
-            <div className="col-md-2">
-              <MDBBtn onClick={toggle} color="success">
-                <MDBIcon icon="magic" className="mr-1" /> New
-              </MDBBtn>
-            </div>
+    <div className="dashboard-container">
+      <div style={{ width: "100vw", height: "90vh", padding: "18px", background: "none" }}>
+        <div className="row">
+          <div className="col-md-10">
+            <h3><b>Dashboard</b></h3>
           </div>
-          <div className="row p-4">
-            <MDBCard onClick={()=>goToBinder(123)} style={{ width: "15rem", height: "15rem", margin: "15px" }}>
-              <MDBCardImage className="img-fluid" src="https://picsum.photos/640/360" waves />
-              <MDBCardBody>
-                <MDBCardTitle>Card title</MDBCardTitle>
-              </MDBCardBody>
-            </MDBCard>
-            <MDBCard style={{ width: "15rem", height: "15rem", margin: "15px" }}>
-              <MDBCardImage className="img-fluid" src="https://picsum.photos/640/360" waves />
-              <MDBCardBody>
-                <MDBCardTitle>Card title</MDBCardTitle>
-              </MDBCardBody>
-            </MDBCard>
-            <MDBCard style={{ width: "15rem", height: "15rem", margin: "15px" }}>
-              <MDBCardImage className="img-fluid" src="https://picsum.photos/640/360" waves />
-              <MDBCardBody>
-                <MDBCardTitle>Card title</MDBCardTitle>
-              </MDBCardBody>
-            </MDBCard>
-            <MDBCard style={{ width: "15rem", height: "15rem", margin: "15px" }}>
-              <MDBCardImage className="img-fluid" src="https://picsum.photos/640/360" waves />
-              <MDBCardBody>
-                <MDBCardTitle>Card title</MDBCardTitle>
-              </MDBCardBody>
-            </MDBCard>
-            <MDBCard style={{ width: "15rem", height: "15rem", margin: "15px" }}>
-              <MDBCardImage className="img-fluid" src="https://picsum.photos/640/360" waves />
-              <MDBCardBody>
-                <MDBCardTitle>Card title</MDBCardTitle>
-              </MDBCardBody>
-            </MDBCard>
-            <MDBCard style={{ width: "15rem", height: "15rem", margin: "15px" }}>
-              <MDBCardImage className="img-fluid" src="https://picsum.photos/640/360" waves />
-              <MDBCardBody>
-                <MDBCardTitle>Card title</MDBCardTitle>
-              </MDBCardBody>
-            </MDBCard>
-            
+          <div className="col-md-2">
+            <MDBBtn onClick={toggle} color="success">
+              <MDBIcon icon="magic" className="mr-1" /> New
+              </MDBBtn>
           </div>
         </div>
-        {Modal()}
+        <div className="row p-4">
+          {Binders()}
+        </div>
       </div>
+      {Modal()}
+    </div>
   )
 }
 

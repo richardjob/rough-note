@@ -11,7 +11,7 @@ const AuthRouter = () => {
     const uiConfig = {
         callbacks: {
             signInSuccessWithAuthResult: function(authResult, redirectUrl) {
-                window.localStorage.setItem('user', authResult)
+                window.localStorage.setItem('user', JSON.stringify(authResult.user))
                 window.location.assign("/dashboard")
                 return false;
             }

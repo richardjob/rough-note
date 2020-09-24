@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import '../App.css';
 import { MDBBtn, MDBIcon, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBCard, MDBCardImage,MDBCardBody, MDBCardTitle } from 'mdbreact';
+import { getBinder } from './Helpers/Dashboard';
 
-const BinderRouter = ({binder}) => {
+const BinderRouter = () => {
 
-    console.log(binder);
-
-
+  const binderID = window.localStorage.getItem('binder')
   const [modal, setModal] = useState(false)
+  const [binder, setBinder] = useState({})
+
+  useEffect(()=>{
+    getBinder(binderID).then(b=>{
+      setBinder(b)
+    })
+  },[])
 
   const toggle = () => {
     setModal(!modal)
@@ -16,21 +22,10 @@ const BinderRouter = ({binder}) => {
   const Modal = () => {
     return (
       <MDBModal isOpen={modal} toggle={toggle}>
-        <MDBModalHeader toggle={toggle}>Create a new Binder</MDBModalHeader>
-        <MDBModalBody>
-          <label
-            htmlFor="defaultFormCardNameEx"
-            className="grey-text font-weight-light"
-          >
-            Binder name
-          </label>
-          <input
-            type="text"
-            id="defaultFormCardNameEx"
-            className="form-control" />
-        </MDBModalBody>
+        <MDBModalHeader toggle={toggle}>Save Binder</MDBModalHeader>
         <MDBModalFooter>
-          <MDBBtn color="success">Create</MDBBtn>
+        <MDBBtn color="default">Cancel</MDBBtn>
+          <MDBBtn color="success">Save</MDBBtn>
         </MDBModalFooter>
       </MDBModal>
     )
